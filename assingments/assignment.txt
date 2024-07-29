@@ -117,6 +117,14 @@ in particular type of fund.
 
 Program 2
 
+try the program in a02assignment.jpg
+
+program 3
+make the accscenario and taskscenario work
+in your system.
+
+
+
 
 
 
