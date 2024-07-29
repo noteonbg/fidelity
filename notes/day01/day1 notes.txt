@@ -386,6 +386,98 @@ if X is what our intent is then start with spring boot and not with spring.
 I know spring basics, then I apply it along with Spring boot.. ==this is need in the project.
 
 
+Try this....
+
+1. accscenario..
+1. what function to write in each layer if the need is to
+get all accounts less than some balance..
+we want to see all accounts less than 10000 ..
+
+
+List<Account> getAllaccountsLessThanBalance(int balanceGiven)
+
+list.size is zero... no accounts
+list.size is not zero
+how will you communicate failures which are independent of user..
+
+
+
+
+
+2. mutualfund scenario. -- you can look into structure of accscenario..
+complete packages, classes, interfaces to indicate
+1. add a portpolio..
+2. all portpolios which are worth more than some X amount.
+
+make use of the excel sheet present in references folder if need be..
+
+a Good programmer must be good at function design..
+in real life design is non deterministic.
+
+in any project somebody should be held responsible for bad function design.
+
+good design
+1. we should know tradeoff.
+2. we know layering..
+3. communication happens between layers.. both success and failure scenarios
+4. consistency..
+5. when confused stick with basics..
+
+1. core java itself architecture becomes clear.. if this is not clear spring boot or spring is not going to help.
+
+== loose coupling..
+dependency injection
+inversion of control
+
+what is hello world spring or spring boot program.
+1. check is spring able to create the object.
+2. is wiring done..taking  one object and putting it inside the other class.
+
+class A
+   public void f1(B temp)
+	{
+
+	}
+
+class B
+
+can A and B object be created by spring.
+can f1 function of A be called by spring..
+if f1 function of A is called by spring, then we say spring wired B inside A.
+
+A= service, View
+B =DAO, Model
+
+we have show more patience than intelligence.. including libraries.. maven advnetures..
+
+
+How do you tell that it is a spring boot or spring application.
+1. look at the pom.xml of the maven project
+2. look at the dependancies name if you find spring boot.. then it is spring boot
+
+
+rule of problem solving hell or heaven does not matter, repeatability does not matter.
+
+
+
+5 spring boot with me projects 
+
+1. just spring boot with no other dependancies.
+2. spring boot with database dependancies
+3. spring boot with web dependancies.
+4. all the things put together in a single project.
+5. security, microservcies, cloud..
+
+
+Annotations.
+
+1. think of it like license, passport..
+
+we told spring boot autoconfigures things, when , only when we use the annotation called @springBootApplication.
+if a person tells i forgot to write the annotation.. what will it result in
+
+1. compilation error
+2. runtime error.
 
 
 
@@ -409,6 +501,110 @@ I know spring basics, then I apply it along with Spring boot.. ==this is need in
 
 
 
+how to recognize a "conscious" spring boot programmer
+he will know which object he created, which object spring boot created.
+
+inversion of control.
+
+1. think what is control  -- we are creating objects, in our code, now we dont create ask spring to create it.
+2. invert it.
+
+Dependancy  in OO
+
+class House
+{
+
+void electricityworks(electrician e)
+{
+
+}
+
+}
+
+House is dependant on Electrician for electricity works
+
+dependency
+
+spring tells if you have two classes X and Y
+I can put Y into some function of X.
+this is called dependency, because spring is doing it we can call it as injection.
+
+
+local variable in any programming refers to variable which is specific to a function.
+
+
+
+1  depends on 2 for 3
+
+1,2 will be classes.
+3 has to be a function.
+
+
+
+
+
+injection
+
+
+Assocaition
+
+//Mobile is associated with Battery and Sim
+class Mobile 
+{
+	private Battery b;
+	private Sim sim;
+
+	public Mobile(Sim s)
+	{
+		b=new Battery();  //composition
+		sim =s;  //aggregation
+		
+	}
+
+
+
+}
+
+
+
+depandancy
+Assocation ( composition, aggregation)
+inheritance.
+
+1. inversion of control...  instead of we creating object, ask the framework to create the object.
+2. dependency injection.. we have two classes A and B. spring can give an object of one class as a local variable of some function
+in other class.
+
+
+Hello world spring.
+1. prove object are getting created.
+2. prove you are able to wire.. (dependency injection)
+3. now objects are with spring, tell spring hey give me.  (varies between spring and spring boot)
+
+
+A == service
+B  == dao
+
+A=presentation
+B = service.
+
+A= view
+B =model.
+
+
+spring boot application.
+create a class called X
+create a function called putYinX( Y obj)
+create a class called Y
+prove object of X and Y are created by spring
+prove putYinX is getting called by spring.
+
+at class level use @component
+at function level use @autowired
+
+
+
+dependency is lowest possible scope at which you can make two classes interact
 
 
 
@@ -423,18 +619,78 @@ I know spring basics, then I apply it along with Spring boot.. ==this is need in
 
 
 
+what did you do in spring boot or in spring?
+
+1. created the objects.
+2. wired it.
+who created the object .. asked spring to create the object, how did you ask.. by using annotations.. dinosaur way.. by using xml.
+
+we have demonstrated inversion of control and dependency injection. in our hello world.
+
+while working on spring, if people have not understood core java, it will appear like a ghost and torture them.. 
+
+after you create a variable what do we do?
+operate on it.
+
+after you create an object, what do you do
+call non static functions using it
+
+if you put B object inside A class. it means some A class function is going to call the B class function True 
+microscope is being 5/5 in variables and functions.
+
+tell spring boot after you created objects and wired. let me know...  ==  Event   Handling
+after the user clicked on the button, let me know 
+
+
+class A implements X  // I wrote this.. ok the function definition now i wont call, somebody else will call it
+{
 
 
 
 
 
 
+Entire spring boot programming no matter whever you see..
+1. i asked spring to create objects.
+2. i asked spring to wire.
+3. then I told spring hey give me the object.
+4. then what you did, call non static function based on object got at 3.
 
 
 
+1. no vagueness in understanding architecture..
+where does it start, where does it end.  --excel sheet. accScneario, taskscneario..
+
+2. we came to spring boot or spring..
+1. i asked spring to create objects.
+2. i asked spring to wire.
+3. then I told spring hey give me the object. how did you this in spring boot.
+event driven way..
+4. then what you did, call non static function based on object got at 3.
 
 
+3. some theory to chew other people brain..
+3.1 inversion of control
+3.2 dependency injection.
 
+if we can use spring boot application as core java applicatin in our project then most of times
+it means we will stop writing poems and debugging time will reduce... moral science word.. we will see
+
+I am going to do spring boot, this is not time to think of architecture it should have already done..
+
+
+x- main
+x.controller -- presentation or web servies
+x.service = service interface and classes
+x.dao == dao interface and classes.
+x.model  = models.
+x.reponses == other things.
+x.config=configuration
+x.security=security./
+
+
+I had core java code, start implementing Inversion of Control.. earlier I created object, now tell hey spring you
+create objects..
 
 
 
