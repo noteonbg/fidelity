@@ -1,10 +1,20 @@
 package accscenario.dao;
 
+import org.springframework.stereotype.Component;
+
 import accscenario.model.Account;
 import accscenario.model.AccountStatus;
 
+@Component
 public class AccountDaoImplementation implements AccountDao {
 
+	public AccountDaoImplementation()
+	{
+		
+		System.out.println("\n Account dao object created");
+	}
+	
+	
 	@Override
 	public AccountStatus getAccountDetailsFromDB(int accountno, int pin) {
 		// TODO Auto-generated method stub

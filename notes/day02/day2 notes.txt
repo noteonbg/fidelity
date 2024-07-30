@@ -1,0 +1,81 @@
+nothing is more stupid than a person who solves a problem without knowing context..
+
+concept is not a function of time, syntax is.
+
+does yesterday work today also.
+
+commonly used functions, classes, annotation in java we should not assume we know it.
+we should open documentation and get a view on it.. what official guy is telling.
+
+we keep getting doubts so tolerate the uncertainty but definitely do a small poc to clarify
+the doubt on syntax or concept.
+
+x- class which contains main
+x.controller
+x.service
+x.doa
+x.model
+
+I have a standard and no product adhers to the standard.. that means standard is useless.
+
+always do bad things by telling good things..
+example till yesterday we had a constructor which takes no arguments..
+so everybody code was working
+today I got a "brilliant" idea and removed that constructor and put  a constructor with arguments.
+then yesterday code will fail today...
+
+
+SOLID principles of class design..
+
+
+1. architecture was decided already...
+2. we told spring hey create the object and wire it.
+3. since we know which is start... we implemnteed commandline runner and asked
+hey give me the presentation object. can I get service object yes, can i get dao object yes..
+why.. we are "conscious" of what objects spring has got.
+
+
+dont be bothered about which object is getting created first.. see whether wiring is happening
+properly or not.
+
+being a programmer needs patience than intelligence.
+being a design.. you need intelligence and then patience..
+design the plus always comes with a minus..
+
+as a programmer it is very important to keep the cost of failure low..
+
+in any architecture people who write poems will create misery for themselves and others..
+
+i think it is to better always call a function and then define it
+rather than define a function and think where to call it.
+
+hey I am using spring boot or spring code.
+1. show me some class, some interface , some function of spring boot used in the code..
+
+I am using spring boot annotations, but i am not using any spring boot related class
+or function in my code.. do you feel the spring boot annotations will work 
+
+
+hands on
+1. mutualfund scenario == core java application == convert that into spring boot.
+2. archcode.. == try to understand the application = convert this into spring boot 
+3. accscenario and taskscenario.. that should also work in spring boot..
+
+
+
+
+
+once this we know is working.. we will deal one more layer in architecture web services.
+later we will add a dao layer..
+reflection looks like in a project.
+
+
+
+
+
+
+
+
+
+
+
