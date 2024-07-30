@@ -61,13 +61,287 @@ hands on
 2. archcode.. == try to understand the application = convert this into spring boot 
 3. accscenario and taskscenario.. that should also work in spring boot..
 
-
-
-
-
 once this we know is working.. we will deal one more layer in architecture web services.
 later we will add a dao layer..
 reflection looks like in a project.
+
+1. we should how to resolve conflicts..
+we are telling inside A autowire B,but spring has got two B objects with it, 
+2. scope of the object..
+when we tell spring hey give me the A object, it will give same A object .. singleton..
+we can change it..
+3. profile..
+
+Web services.. Rest API ... Distributed computing..
+
+why we should write a web service..
+
+1. to make my service function usable to other people who use different programming language.
+
+I wrote my adding of two numbers in java..
+I want the python calls to guy call it or .net guys to call it.. then preferred way is to wrap
+the adding of two numbers of java into a web service..
+
+once write a web service, the call id distributed..
+
+why webservice.
+0. standard.
+0.1 http or its cousins.
+0.2 JSON -- Data format..
+1. we want distributed computing.
+2. we want people writing code in different langauges to call our service function.
+
+
+web service
+important word is service and then the web..
+
+I want to write a web servie.
+
+1. is your service function working. are you clear what is your service return type
+what is its input argument...
+
+web in web service.
+1. http and its related usage.
+
+service function == business logic == company revenue..
+
+
+standards keep evolving based on need. once upon a time distributed computing
+
+1. CORBA
+2. 2000 to 2004 to 2010 -- SOAP
+
+
+
+
+anybody who cannot relate any concept finally to variables and functions
+the concept is not worth knowing.. programming goes.
+
+
+what is json..
+
+1. a standard to represent variables.
+
+int f1(char c)
+int, char are data types... json can be used to represent variables and its data type in a standardized
+way...
+
+standardized way... python agrees, java agrees, so does javascript. so does .net..
+
+I am dealing with json..
+1. as what input or output.
+
+what is web service.
+1. a standard to do distributed computing using http related things..
+2. it uses json standard or xml to represent variables..
+
+I want to write a web service.
+
+1. is your service working..
+2. no forget the web service
+
+
+web serice function
+will called as a part of http request processing.
+
+service function
+programmer only has to call it.
+
+
+1. spring boot project == get clarity on architecture, clarity on models, clarity on service.
+2. spring boot project with database = get clarity on dao, solve my problem on database.. 
+3. spring boot web project == solve my problems on http...
+4. integrate 1 to 3..
+5. add cloud entertainment, unit testing.. microservices. some other legacy...
+
+when a java person gets a doubt, he should have the courage of creating a new package..atleast
+I am afraid of people who write poems...
+
+when we write a web service, we are using http ok... but we are not building presentation.
+
+browser is for http based presentations and not for checking web services..
+i want to check whether web service works..  good bad tool , postman.. good tool which is becoming bad is
+insomnia..
+
+I am using http for what
+
+1. web applcaition for presentation   -- browser is great.. react, spring thymeleaf, jsf, jsp..
+if web application.. function returns view + model = it is a presentation
+account statement + html or pdf == web based presentation
+
+
+2. web application for web services..  -- insomnia.. swagger.. postman..
+it returns only model == web service
+account statement details == web service..
+
+
+web services.
+
+1. we know the theory..
+2. we know what is input needed for service fnction and what is return type.
+service function input is X type and return type is Y type.
+3. we will create a new class whose functions will be web services functions.
+but these function input now will be  X and return type will be Y only.
+
+shorts cuts of violating architecture  == sin... 
+
+
+
+I want to write web service.
+
+1. which function of service, do you want to write a web service for.
+TaskStatus add(Task task);
+
+2. we will write a  new class.. which will contains functions. these
+functions will process http reqest. hence called web services functions.
+
+TaskStatus webserviceadd(I will read input from http request Task task)
+{
+
+return TaskStatus bject s http response..
+
+
+}
+
+
+can we generalize our learning..
+
+hey whatever functions we write in the Webservices class ie class which uses teh annotation
+called RestController are functions which we are not going to call system is going to cal
+under a particular circumstance.
+
+1. if you have a function which gets called only under a particular circumsntance ==Event handling
+function.. for any event handling function, we should register.. 
+
+
+
+
+
+
+1. know your input and return type for service function for which
+you plan to write a web service.
+
+2. in a new class which can handle http requests.. @RestController on the class.
+write a function input and return type matches the service function..
+ensure input is read from http request.
+ensure output is sent via http response
+
+1. complete the mutualfund scenario where dao implementation has a map.. ( later we will replace this db)
+2. create new spring boot project only with web dependency. just see whether it works..
+
+
+
+Hope we are comfortable why web services and what json does..
+
+we want to convert our accountscenario into  web services functions == ghost..
+
+1. we have some function f1 in accountscenario service.
+2. we want to write a function called f2 in web services, which will call f1 .
+f2 function is a event driven, it will get called due to some http event.
+its input will be picked up from http request
+the output will be sent as the http response.
+
+assume we wrote the web service function
+how did we check the web service function.. using postman or insomnia.. ok..but in real life
+what it means some other person has written a code in python or in c++ which will call the
+web services function or in short he will make a http request using some library..
+
+somebody wrote a web service function in python  ==defined the function
+I want to call it from java... caller.. 
+I should pick up a java data type which will help in making http requests..
+
+rule no of 1 web service function
+
+1. prove when request is made, function is getting called.
+2. we are able to read input parameters from http request.
+3. prove whatever response we are giving is got by the client.
+	
+
+if you want to identify something then use pathvariable
+and get to subset from the identification use query parameters.
+
+
+@component == superset
+@servcie == subset of component, decent name to tell you are talking about a serive layer function..
+
+
+I want spring to create object of service.. instead of @component consider using @service
+no I will use @component only ok go head and use it no difference..
+
+in dao layer use @Repository.. are you doing real dao stuff talking with database yes.. 
+then stick with @repository and not use @component...
+
+1. core java.
+2. enabled with spring boot without web service..
+3. once we know 2 is working then we started considering web service
+
+people who tell i will do 3, figure out 2 and then figure out 1, all the best..
+
+I am in the controller function, i have issues with reading input properly..
+and I have issues setting http header.s.... some issues with respect to http.
+
+1. dont touch service.. service is getting 
+2. focus only on the controller without being botherd about did reach i service
+
+
+controller should return httpstatus code + content...
+
+= ResponseEntity..this is a class.. 
+
+ok i have int, now i have responsentity
+with int  , i +1, i*3; ,, 
+
+I want to create an object of class X, X is not mine.. then first decency is look at constructors
+than doing astrology on the code..
+
+ResponseEntity r =new REsponseEntity();//enertainment ..
+
+
+whoever is calling the web service..
+
+callWebservice.ifsuccess(do something).failure("do something");
+
+
+service layer should always be presentation independent..
+
+tie service layer with http.. without http dont touch service layer.. ==birth of a poet..
+
+Reflection
+
+1. we have some X with us.
+2. we cannot see X directly.
+3. we want to know something about X.
+4. so what we do is show X to a mirror.
+5. thru the mirror try to know about X.
+6. based on what we know, take some actions..
+
+
+we == frameworks
+X == object or class programmer have created.
+frameworks cannot see into X directly..
+show X to a mirror == get a Class class object for the X
+thru the Class class object try to find out whether some annotation is used, some function is defined..
+once it knows some annotation is used.. then do something, if annotation is not used then o something else..
+
+
+ask chatgpt to generate a spring boot web services without database and using some datastructures
+for storing data.. in financial domain..
+
+taskscneario.. write a controller function for atleast 2 things.. in service..
+
+
+
+
+
+
+
+
+
+
+
+
+Lamda expressions.. stream, filter...
+
 
 
 
