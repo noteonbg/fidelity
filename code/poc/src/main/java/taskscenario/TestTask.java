@@ -31,9 +31,10 @@ public class TestTask implements CommandLineRunner{
 
 	}
 	
-	@Autowired
+	
 	String s;
-	//TaskDao taskdao;
+	@Autowired
+	TaskDao taskdao;
 	//TaskPresentation taskPresentation;
 	
 
@@ -41,7 +42,7 @@ public class TestTask implements CommandLineRunner{
 	public void run(String... args) throws Exception {
 		// TODO Auto-generated method stub
 		//taskPresentation.start();
-		s.toUpperCase();
+	//	s.toUpperCase();
 		
 		Task t =new Task(11,"A",3);
 		TaskStatus x = taskdao.addTaskInDB(t);
