@@ -1,0 +1,1121 @@
+src/main/java/com/finserve/banking/
+    ├── BankingApplication.java
+    ├── controller/
+    │   ├── AccountController.java
+    │   └── TransactionController.java
+    ├── model/
+    │   ├── Account.java
+    │   └── Transaction.java
+    ├── repository/
+    │   ├── AccountRepository.java
+    │   └── TransactionRepository.java
+    └── service/
+        ├── AccountService.java
+        └── TransactionService.java
+
+
+
+package com.finserve.banking;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class BankingApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(BankingApplication.class, args);
+    }
+}
+
+package com.finserve.banking.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class Account {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String accountNumber;
+    private String accountHolderName;
+    private double balance;
+
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public String getAccountHolderName() {
+        return accountHolderName;
+    }
+
+    public void setAccountHolderName(String accountHolderName) {
+        this.accountHolderName = accountHolderName;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+}
+
+package com.finserve.banking.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import java.time.LocalDateTime;
+
+@Entity
+public class Transaction {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private Long accountId;
+    private String type; // "DEPOSIT" or "WITHDRAWAL"
+    private double amount;
+    private LocalDateTime timestamp;
+
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+}
+
+package com.finserve.banking.repository;
+
+import com.finserve.banking.model.Account;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface AccountRepository extends JpaRepository<Account, Long> {
+    Account findByAccountNumber(String accountNumber);
+}
+
+package com.finserve.banking.repository;
+
+import com.finserve.banking.model.Transaction;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface TransactionRepository extends JpaRepository<Transaction, Long> {
+}
+
+package com.finserve.banking.service;
+
+import com.finserve.banking.model.Account;
+import com.finserve.banking.repository.AccountRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Optional;
+
+@Service
+public class AccountService {
+    @Autowired
+    private AccountRepository accountRepository;
+
+    public Account createAccount(Account account) {
+        return accountRepository.save(account);
+    }
+
+    public Optional<Account> getAccount(Long id) {
+        return accountRepository.findById(id);
+    }
+
+    public Account getAccountByNumber(String accountNumber) {
+        return accountRepository.findByAccountNumber(accountNumber);
+    }
+
+    public Account updateAccount(Account account) {
+        return accountRepository.save(account);
+    }
+
+    public void deleteAccount(Long id) {
+        accountRepository.deleteById(id);
+    }
+}
+
+package com.finserve.banking.service;
+
+import com.finserve.banking.model.Account;
+import com.finserve.banking.model.Transaction;
+import com.finserve.banking.repository.AccountRepository;
+import com.finserve.banking.repository.TransactionRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+@Service
+public class TransactionService {
+    @Autowired
+    private TransactionRepository transactionRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
+
+    public Transaction deposit(Long accountId, double amount) {
+        Optional<Account> accountOpt = accountRepository.findById(accountId);
+        if (accountOpt.isPresent()) {
+            Account account = accountOpt.get();
+            account.setBalance(account.getBalance() + amount);
+            accountRepository.save(account);
+
+            Transaction transaction = new Transaction();
+            transaction.setAccountId(accountId);
+            transaction.setType("DEPOSIT");
+            transaction.setAmount(amount);
+            transaction.setTimestamp(LocalDateTime.now());
+            return transactionRepository.save(transaction);
+        }
+        throw new RuntimeException("Account not found");
+    }
+
+    public Transaction withdraw(Long accountId, double amount) {
+        Optional<Account> accountOpt = accountRepository.findById(accountId);
+        if (accountOpt.isPresent()) {
+            Account account = accountOpt.get();
+            if (account.getBalance() >= amount) {
+                account.setBalance(account.getBalance() - amount);
+                accountRepository.save(account);
+
+                Transaction transaction = new Transaction();
+                transaction.setAccountId(accountId);
+                transaction.setType("WITHDRAWAL");
+                transaction.setAmount(amount);
+                transaction.setTimestamp(LocalDateTime.now());
+                return transactionRepository.save(transaction);
+            }
+            throw new RuntimeException("Insufficient funds");
+        }
+        throw new RuntimeException("Account not found");
+    }
+}
+
+package com.finserve.banking.controller;
+
+import com.finserve.banking.model.Account;
+import com.finserve.banking.service.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/accounts")
+public class AccountController {
+    @Autowired
+    private AccountService accountService;
+
+    @PostMapping
+    public Account createAccount(@RequestBody Account account) {
+        return accountService.createAccount(account);
+    }
+
+    @GetMapping("/{id}")
+    public Optional<Account> getAccount(@PathVariable Long id) {
+        return accountService.getAccount(id);
+    }
+
+    @GetMapping("/number/{accountNumber}")
+    public Account getAccountByNumber(@PathVariable String accountNumber) {
+        return accountService.getAccountByNumber(accountNumber);
+    }
+
+    @PutMapping
+    public Account updateAccount(@RequestBody Account account) {
+        return accountService.updateAccount(account);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteAccount(@PathVariable Long id) {
+        accountService.deleteAccount(id);
+    }
+}
+
+package com.finserve.banking.controller;
+
+import com.finserve.banking.model.Transaction;
+import com.finserve.banking.service.TransactionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/transactions")
+public class TransactionController {
+    @Autowired
+    private TransactionService transactionService;
+
+    @PostMapping("/deposit/{accountId}")
+    public Transaction deposit(@PathVariable Long accountId, @RequestParam double amount) {
+        return transactionService.deposit(accountId, amount);
+    }
+
+    @PostMapping("/withdraw/{accountId}")
+    public Transaction withdraw(@PathVariable Long accountId, @RequestParam double amount) {
+        return transactionService.withdraw(accountId, amount);
+    }
+}
+
+properties.. think wht to do with this.
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=password
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.h2.console.enabled=true
+
+
+validation logic
+
+package com.finserve.banking.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Positive;
+
+@Entity
+public class Account {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank(message = "Account number is mandatory")
+    private String accountNumber;
+
+    @NotBlank(message = "Account holder name is mandatory")
+    private String accountHolderName;
+
+    @Positive(message = "Balance must be positive")
+    private double balance;
+
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public String getAccountHolderName() {
+        return accountHolderName;
+    }
+
+    public void setAccountHolderName(String accountHolderName) {
+        this.accountHolderName = accountHolderName;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+}
+
+package com.finserve.banking.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.validation.constraints.DecimalMin;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
+import java.time.LocalDateTime;
+
+@Entity
+public class Transaction {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotNull(message = "Account ID is mandatory")
+    private Long accountId;
+
+    @NotBlank(message = "Transaction type is mandatory")
+    private String type; // "DEPOSIT" or "WITHDRAWAL"
+
+    @Positive(message = "Amount must be positive")
+    private double amount;
+
+    private LocalDateTime timestamp;
+
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getAccountId() {
+        return accountId;
+    }
+
+    public void setAccountId(Long accountId) {
+        this.accountId = accountId;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
+    }
+}
+
+package com.finserve.banking.controller;
+
+import com.finserve.banking.model.Account;
+import com.finserve.banking.service.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/accounts")
+@Validated
+public class AccountController {
+    @Autowired
+    private AccountService accountService;
+
+    @PostMapping
+    public ResponseEntity<Account> createAccount(@Valid @RequestBody Account account) {
+        Account createdAccount = accountService.createAccount(account);
+        return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Optional<Account>> getAccount(@PathVariable Long id) {
+        Optional<Account> account = accountService.getAccount(id);
+        return account.isPresent() ? ResponseEntity.ok(account) : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/number/{accountNumber}")
+    public ResponseEntity<Account> getAccountByNumber(@PathVariable String accountNumber) {
+        Account account = accountService.getAccountByNumber(accountNumber);
+        return account != null ? ResponseEntity.ok(account) : ResponseEntity.notFound().build();
+    }
+
+    @PutMapping
+    public ResponseEntity<Account> updateAccount(@Valid @RequestBody Account account) {
+        Account updatedAccount = accountService.updateAccount(account);
+        return ResponseEntity.ok(updatedAccount);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAccount(@PathVariable Long id) {
+        accountService.deleteAccount(id);
+        return ResponseEntity.noContent().build();
+    }
+}
+
+package com.finserve.banking.controller;
+
+import com.finserve.banking.model.Transaction;
+import com.finserve.banking.service.TransactionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+
+@RestController
+@RequestMapping("/transactions")
+@Validated
+public class TransactionController {
+    @Autowired
+    private TransactionService transactionService;
+
+    @PostMapping("/deposit/{accountId}")
+    public ResponseEntity<Transaction> deposit(@PathVariable Long accountId, @RequestParam @Positive(message = "Amount must be positive") double amount) {
+        Transaction transaction = transactionService.deposit(accountId, amount);
+        return new ResponseEntity<>(transaction, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/withdraw/{accountId}")
+    public ResponseEntity<Transaction> withdraw(@PathVariable Long accountId, @RequestParam @Positive(message = "Amount must be positive") double amount) {
+        Transaction transaction = transactionService.withdraw(accountId, amount);
+        return new ResponseEntity<>(transaction, HttpStatus.CREATED);
+    }
+}
+
+
+package com.finserve.banking.controller;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.validation.FieldError;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@ControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        Map<String, String> errors = new HashMap<>();
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
+            String fieldName = ((FieldError) error).getField();
+            String errorMessage = error.getDefaultMessage();
+            errors.put(fieldName, errorMessage);
+        });
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RuntimeException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+}
+
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=password
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.h2.console.enabled=true
+
+---------------------------------------------
+
+Certainly! Let’s explore a case study where the Spring Framework is used in the financial domain. We’ll focus on a hypothetical scenario involving a financial institution that develops a modern trading platform.
+
+### Case Study: Developing a Trading Platform for FinServe Bank
+
+Background:
+FinServe Bank is a global financial institution that specializes in trading and investment services. The bank aims to develop a new trading platform to enhance real-time trade processing, improve scalability, and ensure high availability for its clients.
+
+Challenge:
+The existing trading system at FinServe Bank is built on outdated technology and struggles to handle increasing transaction volumes and complex trading algorithms. The system often experiences performance bottlenecks and downtime during peak trading hours. To address these issues, the bank decides to develop a new trading platform using modern technologies.
+
+Solution:
+FinServe Bank chooses the Spring Framework for its new trading platform due to its robust features for building scalable and maintainable applications. The platform is designed to support high-frequency trading, real-time data processing, and seamless integration with other financial services.
+
+Key Components and Architecture:
+
+1. Microservices Architecture:
+   - Spring Boot: Used to create lightweight, standalone microservices for various functionalities like order management, trade execution, risk assessment, and market data feeds.
+   - Spring Cloud: Provides tools for managing microservices in a distributed environment, including service discovery, configuration management, and circuit breakers.
+
+2. Real-Time Data Processing:
+   - Spring WebFlux: Utilized to handle real-time data streams and asynchronous processing. This is crucial for processing high-frequency trade data and ensuring low-latency responses.
+   - Reactive Programming: With Project Reactor, the platform supports reactive streams to handle large volumes of data efficiently.
+
+3. Integration and Messaging:
+   - Spring Integration: Facilitates integration with external systems such as market data providers, third-party trading APIs, and internal databases.
+   - Spring Kafka: Used for messaging and event streaming, allowing the platform to handle real-time event processing and communication between microservices.
+
+4. Data Management:
+   - Spring Data JPA: Simplifies database interactions for persisting trade orders, transaction logs, and user data. It supports various databases, including relational and NoSQL databases.
+   - Spring Cache: Implements caching mechanisms to improve performance by reducing the load on databases and speeding up data retrieval.
+
+5. Security and Compliance:
+   - Spring Security: Ensures that the platform adheres to stringent security requirements, including user authentication, authorization, and protection against common security threats.
+   - Auditing and Logging: Integrated with Spring’s auditing and logging features to maintain an audit trail of all trading activities and ensure compliance with regulatory standards.
+
+6. Scalability and High Availability:
+   - Docker and Kubernetes: The platform is containerized using Docker and orchestrated with Kubernetes to ensure scalability and high availability. This allows the platform to handle varying loads and minimize downtime.
+
+Implementation:
+The development team at FinServe Bank follows Agile methodologies, with iterative development and continuous integration. They use Spring Boot to quickly build and deploy microservices, Spring Cloud for managing service interactions, and Spring Data JPA for data persistence. The use of WebFlux and reactive programming ensures that the platform can handle high-throughput trading scenarios.
+
+Outcome:
+The new trading platform successfully meets FinServe Bank's requirements, providing:
+- High Performance: The system can handle high-frequency trading with low latency, thanks to the reactive programming model.
+- Scalability: The microservices architecture and containerization allow the platform to scale horizontally as trading volumes increase.
+- Reliability: The use of Spring Cloud and Kubernetes ensures that the platform remains highly available and resilient to failures.
+- Security: Robust security measures are in place to protect sensitive trading data and ensure compliance with regulations.
+
+Conclusion:
+By leveraging the Spring Framework, FinServe Bank has built a modern trading platform that addresses the limitations of the old system and meets the demands of high-frequency trading. The platform's use of microservices, real-time data processing, and scalable infrastructure positions the bank for future growth and success in the competitive financial market.
+
+---------------------------------------------------------------
+
+src/main/java/com/finserve/trading/
+    ├── TradingApplication.java
+    ├── controller/
+    │   ├── OrderController.java
+    │   └── TradeController.java
+    ├── model/
+    │   ├── Order.java
+    │   └── Trade.java
+    ├── repository/
+    │   ├── OrderRepository.java
+    │   └── TradeRepository.java
+    └── service/
+        ├── OrderService.java
+        └── TradeService.java
+
+package com.finserve.trading;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class TradingApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(TradingApplication.class, args);
+    }
+}
+
+package com.finserve.trading.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class Order {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String symbol;
+    private int quantity;
+    private double price;
+
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+}
+
+package com.finserve.trading.model;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class Trade {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private Long orderId;
+    private String symbol;
+    private int quantity;
+    private double price;
+
+    // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+
+    public String getSymbol() {
+        return symbol;
+    }
+
+    public void setSymbol(String symbol) {
+        this.symbol = symbol;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public void setPrice(double price) {
+        this.price = price;
+    }
+}
+
+
+package com.finserve.trading.repository;
+
+import com.finserve.trading.model.Order;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface OrderRepository extends JpaRepository<Order, Long> {
+}
+
+package com.finserve.trading.repository;
+
+import com.finserve.trading.model.Trade;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface TradeRepository extends JpaRepository<Trade, Long> {
+}
+
+package com.finserve.trading.service;
+
+import com.finserve.trading.model.Order;
+import com.finserve.trading.repository.OrderRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class OrderService {
+    @Autowired
+    private OrderRepository orderRepository;
+
+    public Order createOrder(Order order) {
+        return orderRepository.save(order);
+    }
+
+    public List<Order> getAllOrders() {
+        return orderRepository.findAll();
+    }
+}
+
+package com.finserve.trading.service;
+
+import com.finserve.trading.model.Order;
+import com.finserve.trading.model.Trade;
+import com.finserve.trading.repository.OrderRepository;
+import com.finserve.trading.repository.TradeRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class TradeService {
+    @Autowired
+    private TradeRepository tradeRepository;
+    
+    @Autowired
+    private OrderRepository orderRepository;
+
+    public Trade executeTrade(Long orderId) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+        Trade trade = new Trade();
+        trade.setOrderId(order.getId());
+        trade.setSymbol(order.getSymbol());
+        trade.setQuantity(order.getQuantity());
+        trade.setPrice(order.getPrice());
+        return tradeRepository.save(trade);
+    }
+
+    public List<Trade> getAllTrades() {
+        return tradeRepository.findAll();
+    }
+}
+
+
+package com.finserve.trading.controller;
+
+import com.finserve.trading.model.Order;
+import com.finserve.trading.service.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/orders")
+public class OrderController {
+    @Autowired
+    private OrderService orderService;
+
+    @PostMapping
+    public Order createOrder(@RequestBody Order order) {
+        return orderService.createOrder(order);
+    }
+
+    @GetMapping
+    public List<Order> getAllOrders() {
+        return orderService.getAllOrders();
+    }
+}
+
+package com.finserve.trading.controller;
+
+import com.finserve.trading.model.Trade;
+import com.finserve.trading.service.TradeService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/trades")
+public class TradeController {
+    @Autowired
+    private TradeService tradeService;
+
+    @PostMapping("/execute/{orderId}")
+    public Trade executeTrade(@PathVariable Long orderId) {
+        return tradeService.executeTrade(orderId);
+    }
+
+    @GetMapping
+    public List<Trade> getAllTrades() {
+        return tradeService.getAllTrades();
+    }
+}
+
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driver-class-name=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=password
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.h2.console.enabled=true
+
+
+
+------------------------------------------------------------
+
+Problem Statement: Mutual Fund Management System
+Scenario: You are tasked with developing a Mutual Fund Management System for a financial institution. The system should manage mutual fund investments, including tracking investments, calculating returns, and providing reports.
+
+The application should have the following functionality:
+
+Manage Mutual Funds: Store and retrieve information about different mutual funds.
+Manage Investments: Record and manage investments made in various mutual funds.
+Calculate Returns: Calculate the total return of investments for each mutual fund.
+Generate Reports: Generate reports on investments and returns.
+Layers to Practice
+Entity Layer: Define entities to represent mutual funds and investments.
+Repository Layer: Use Spring Data JPA repositories to interact with the database.
+Service Layer: Implement business logic for managing mutual funds and investments.
+Controller Layer: Provide REST endpoints to interact with the system.
+
+Detailed Exercises
+
+Exercise: Define JPA entities for MutualFund and Investment.
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+
+@Entity
+public class MutualFund {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String fundName;
+    private double annualReturnRate; // as a percentage
+
+    // Getters and setters
+}
+
+Investment.java
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import java.time.LocalDate;
+
+@Entity
+public class Investment {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private double amount;
+    private LocalDate investmentDate;
+
+    @ManyToOne
+    private MutualFund mutualFund;
+
+    // Getters and setters
+}
+
+
+
+2. Repository Layer
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface MutualFundRepository extends JpaRepository<MutualFund, Long> {
+}
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface InvestmentRepository extends JpaRepository<Investment, Long> {
+    List<Investment> findByMutualFund(MutualFund mutualFund);
+}
+
+
+3. Service Layer
+Exercise: Implement services to handle business logic related to mutual funds and investments.
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class MutualFundService {
+
+    @Autowired
+    private MutualFundRepository mutualFundRepository;
+
+    public MutualFund createMutualFund(MutualFund mutualFund) {
+        return mutualFundRepository.save(mutualFund);
+    }
+
+    public List<MutualFund> getAllMutualFunds() {
+        return mutualFundRepository.findAll();
+    }
+}
+
+InvestmentService.java
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class InvestmentService {
+
+    @Autowired
+    private InvestmentRepository investmentRepository;
+
+    @Autowired
+    private MutualFundRepository mutualFundRepository;
+
+    public Investment createInvestment(Investment investment) {
+        return investmentRepository.save(investment);
+    }
+
+    public List<Investment> getInvestmentsByFund(Long fundId) {
+        MutualFund mutualFund = mutualFundRepository.findById(fundId)
+                .orElseThrow(() -> new RuntimeException("Mutual Fund not found"));
+        return investmentRepository.findByMutualFund(mutualFund);
+    }
+
+    public double calculateTotalInvestment(Long fundId) {
+        List<Investment> investments = getInvestmentsByFund(fundId);
+        return investments.stream()
+                .mapToDouble(Investment::getAmount)
+                .sum();
+    }
+
+    public double calculateTotalReturn(Long fundId) {
+        MutualFund mutualFund = mutualFundRepository.findById(fundId)
+                .orElseThrow(() -> new RuntimeException("Mutual Fund not found"));
+        double totalInvestment = calculateTotalInvestment(fundId);
+        double annualReturnRate = mutualFund.getAnnualReturnRate();
+        return totalInvestment * (annualReturnRate / 100);
+    }
+}
+
+4. Controller Layer
+Exercise: Create REST controllers to expose endpoints for managing mutual funds and investments.
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/mutual-funds")
+public class MutualFundController {
+
+    @Autowired
+    private MutualFundService mutualFundService;
+
+    @PostMapping
+    public MutualFund createMutualFund(@RequestBody MutualFund mutualFund) {
+        return mutualFundService.createMutualFund(mutualFund);
+    }
+
+    @GetMapping
+    public List<MutualFund> getAllMutualFunds() {
+        return mutualFundService.getAllMutualFunds();
+    }
+}
+
+InvestmentController.java
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/investments")
+public class InvestmentController {
+
+    @Autowired
+    private InvestmentService investmentService;
+
+    @PostMapping
+    public Investment createInvestment(@RequestBody Investment investment) {
+        return investmentService.createInvestment(investment);
+    }
+
+    @GetMapping("/fund/{fundId}")
+    public List<Investment> getInvestmentsByFund(@PathVariable Long fundId) {
+        return investmentService.getInvestmentsByFund(fundId);
+    }
+
+    @GetMapping("/fund/{fundId}/total")
+    public double getTotalInvestment(@PathVariable Long fundId) {
+        return investmentService.calculateTotalInvestment(fundId);
+    }
+
+    @GetMapping("/fund/{fundId}/return")
+    public double getTotalReturn(@PathVariable Long fundId) {
+        return investmentService.calculateTotalReturn(fundId);
+    }
+}
+
+This problem statement covers multiple layers of a Spring application, allowing you to practice:
+
+Entity Layer: Define JPA entities to model the domain objects.
+Repository Layer: Create repositories for database access.
+Service Layer: Implement business logic and calculations.
+Controller Layer: Expose REST endpoints for interaction.
+These exercises will give you hands-on experience with Spring Boot and its various components, providing a solid foundation in building a real-world application.
+
+
+
+
+
+
+
+

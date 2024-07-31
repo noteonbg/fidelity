@@ -1,5 +1,8 @@
 package resource;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -29,6 +32,14 @@ public class StepByStepShouldBeFollowedAndNotTalkedAbout  implements CommandLine
 		// this gives you an idea what service function call means
 		//for presentation.
 		
+		boolean status =true;
+		List<Resource> x = resourceDaoInterface.findByAvaialability(status);
+		if(x.size() > 0)
+				System.out.println("show each resource" +x.size());
+		else
+			System.out.println("not found");
+		
+		
 		//single select
 		
 		/*
@@ -45,7 +56,7 @@ public class StepByStepShouldBeFollowedAndNotTalkedAbout  implements CommandLine
 		}
 		*/
 		
-		
+		/*
 		Resource r =new Resource(11,"X",true);
 	
 		try {
@@ -58,9 +69,40 @@ public class StepByStepShouldBeFollowedAndNotTalkedAbout  implements CommandLine
 			System.out.println("could not add");
 		}
 		
+		*/
+		
 		
 		// adding logic
+		/*
+		System.out.println(resourceDaoInterface.getClass().getName());
 		
+		Resource r =new Resource(11,"Y",false);
+		boolean x = resourceDaoInterface.existsById(r.getResourceId());
+		if(x)
+			resourceDaoInterface.save(r);
+		else
+			System.out.println("resource is already present");
+			
+			
+			*/
+		
+		/*
+		int resourceid =44;
+		Optional<Resource> x = resourceDaoInterface.findById(resourceid);
+		if(x.isEmpty())
+			System.out.println("resource Id not found");
+		else
+		{
+				Resource r = x.get();
+				System.out.println(r);
+			
+		}
+		*/
+		}
+		
+		
+		
+			
 		
 		
 		
@@ -68,4 +110,4 @@ public class StepByStepShouldBeFollowedAndNotTalkedAbout  implements CommandLine
 		
 	}
 
-}
+

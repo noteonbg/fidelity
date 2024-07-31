@@ -11,10 +11,9 @@ import org.springframework.context.annotation.Scope;
 @SpringBootApplication
 public class PocApplication implements CommandLineRunner 
 {
-	//@Scope("prototype")
+	
 	@Primary
 	@Bean
-	//@Profile("dev")
 	public B f1()
 	{
 		
@@ -33,7 +32,7 @@ public class PocApplication implements CommandLineRunner
 	//in spring boot we told hey spring you have A object
 	//with you give me here..
 	@Autowired
-	private A obj;
+	private B obj;
 
 	
 	public void run(String... args) throws Exception {

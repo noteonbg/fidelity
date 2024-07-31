@@ -1,0 +1,183 @@
+today story is very simple
+
+lot of terminologies but you should refuse the terminologies and see how
+well you can generalize..
+
+practicals.. lot of code given to you make it work.. no challenge of syntax
+today...
+
+
+day 1.
+
+1. loyalty towards architecture
+2. interface--do we know what will change, what will not change in the project
+3. function design is very important... 5/5 in functions and 5/5 in variables.
+4. folder structure.....it means he will know where things are configured..
+
+
+day 2.
+1. spring .. inversion of control, dependency injection.. process
+we can write each layer independently...
+2. web services.. concept..
+http for presentation  ==w eb application for presentation = angular ..
+http for communicating..calling some function  == web service
+json... standard for data type representation..
+distributed..
+
+day 3.
+ trust is never a great word in science
+
+
+using the object == calling non static functions.. only then object will created
+---------------------------------------------------------------------------------
+
+database layer...
+
+1. we have various strategies, companies prefer.. but usual story prefer something
+which is easy for programmer to code.. then programmer focus on service.. that means
+we use 
+ORM  -- expand it .. Object RElational Mapping.
+what is it? language independent..
+Object == classes object.
+Relation ==tables we map classes and tables.. and use the framework functions
+to interact with the database...
+
+
+DAO layer.. key thing is learn some basic things about the database..
+why database.. physical and logical independence of data..
+alter the table,, old data is not lost.
+
+
+database.
+table
+view
+index
+stored procedure
+trigger..
+
+
+JPA
+Hibernate..
+
+MyBatis..
+
+you havae to configure the database.. this is important, but can be project independent most
+of times or atleast project specific and not programmer specific..
+
+before somebody joins the project tell you have to ask questions, based on the questions
+you will allowed to join the project?
+
+
+
+
+
+
+
+
+I want to work on dao...
+
+0. check whether databse is accessible independently.
+1. come to application.properties and configure the databse.
+
+
+@Entity.. it means this class is mapped to some table..
+you need a primary key
+no I want to mention constraints ok, mention.
+no I will tell non static variablename is x in my class, and column name in the table is y
+ok do it.. learn new annotations..
+
+tools, language, process all try to make the stupid programmer intelligent
+but stupid programmer has his own sense of determinedness.. which cannot be helped.
+
+when will you get one row in a query -- query on primary key
+when will you get multiple rows in a query  query on non primary key will lead multiple rows..
+
+
+x+spring =  x becomes easier  secretly spring is telling dont leave me use me always == get addicted to me..
+
+1. insert
+2. update
+3. single select.
+4. multi select.
+
+
+when multiple tables then challenge is 
+1. foreign key will come..
+2. cascading will come
+so next what...
+learn new annotations.. 
+
+when it comes to mapping between multiple tables
+1. first judge the relationship... one to one, one to many, many to one..
+2. see how are you mentioning the non static variable.. of the class.
+3. see how you are mentioning the column of the table,.. foreign key...
+
+
+somebody tells i have 
+
+class A and class B
+
+B changes class A should not get impacted,,
+interface between class A and class B.
+
+1. you can wire different objects based on profile..
+2. class A needs wiring of B.. but two B objects are present with spring, how can spring
+choose.. answer is you can use annotation called @primary...
+
+
+@Bean
+1. it is used on function.
+2. we are telling spring hey I am going to create the object, ie programmer will create 
+the object.
+3. telling spring hey take this object and you use it for wiring..
+
+@component.
+1. who creates the object == spring.
+2. who is using it for wiring =spring.
+
+@Bean
+1. who creates the object = programmer.
+2. who is using it for wiring =spring.
+
+
+1.
+based on profile using different objects for wiring is a common need in project.
+2. suppose there is ambiguity .. we can resolve it by using @primary or ...
+
+treat this like a test.. uncertainty.. which database .. i leave it you..
+
+
+fidelity\assingments\codesamples in this folder.
+code samples , try to make it work.. 
+a01..
+a02
+a04..
+a12..
+a13..
+this files code it and check whether it works..
+
+break for lunch and we will join back at 2.00PM.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
