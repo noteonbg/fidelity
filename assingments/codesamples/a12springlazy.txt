@@ -1,0 +1,69 @@
+import org.springframework.stereotype.Service;
+
+@Service
+public class MyLazyService {
+
+    public MyLazyService() {
+        System.out.println("MyLazyService instantiated");
+    }
+
+    public void performAction() {
+        System.out.println("Action performed by MyLazyService");
+    }
+}
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Component;
+
+@Component
+public class MyComponent {
+
+    private final MyLazyService myLazyService;
+
+    @Autowired
+    public MyComponent(@Lazy MyLazyService myLazyService) {
+        this.myLazyService = myLazyService;
+        System.out.println("MyComponent instantiated");
+    }
+
+    public void useService() {
+        myLazyService.performAction();
+    }
+}
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
+@SpringBootApplication
+public class MyApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(MyApplication.class, args);
+    }
+
+    @Bean
+    public CommandLineRunner run(MyComponent myComponent) {
+        return args -> {
+            System.out.println("CommandLineRunner executing");
+            myComponent.useService();  // This will trigger the lazy initialization of MyLazyService
+        };
+    }
+}
+
+/*
+
+When you run the application:
+
+You should see the message CommandLineRunner executing printed first.
+The MyComponent bean will be instantiated next, printing MyComponent instantiated.
+When myComponent.useService() is called, MyLazyService will be instantiated, and you'll see MyLazyService instantiated printed.
+
+
+
+*/
+
+
+

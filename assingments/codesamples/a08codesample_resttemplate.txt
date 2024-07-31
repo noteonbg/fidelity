@@ -1,0 +1,166 @@
+package com.example.server;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class SpringBootServerApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBootServerApplication.class, args);
+    }
+}
+
+package com.example.server.controller;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api")
+public class Controller {
+
+    @GetMapping("/greeting")
+    public String getGreeting() {
+        return "Hello from the server!";
+    }
+}
+
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+</dependencies>
+
+package com.example.client;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
+
+@SpringBootApplication
+public class SpringBootClientApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBootClientApplication.class, args);
+    }
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
+
+    @Bean
+    public CommandLineRunner run(RestTemplate restTemplate) {
+        return args -> {
+            String serverUrl = "http://localhost:8080/api/greeting";
+            String response = restTemplate.getForObject(serverUrl, String.class);
+            System.out.println("Response from server: " + response);
+        };
+    }
+}
+
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-webflux</artifactId>
+    </dependency>
+</dependencies>
+
+
+package com.example.client;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+
+@SpringBootApplication
+public class SpringBootClientApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBootClientApplication.class, args);
+    }
+
+    @Bean
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder();
+    }
+
+    @Bean
+    public CommandLineRunner run(WebClient.Builder webClientBuilder) {
+        return args -> {
+            WebClient webClient = webClientBuilder.build();
+            String serverUrl = "http://localhost:8080/api/greeting";
+
+            Mono<String> responseMono = webClient.get()
+                .uri(serverUrl)
+                .retrieve()
+                .bodyToMono(String.class);
+
+            responseMono.subscribe(response -> 
+                System.out.println("Response from server: " + response)
+            );
+        };
+    }
+}
+
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.httpcomponents</groupId>
+        <artifactId>httpclient</artifactId>
+        <version>4.5.14</version>
+    </dependency>
+</dependencies>
+
+
+package com.example.client;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
+@SpringBootApplication
+public class SpringBootClientApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBootClientApplication.class, args);
+    }
+
+    @Bean
+    public CommandLineRunner run() {
+        return args -> {
+            String serverUrl = "http://localhost:8080/api/greeting";
+            
+            try (CloseableHttpClient httpClient = HttpClients.createDefault()) {
+                HttpGet request = new HttpGet(serverUrl);
+                HttpResponse response = httpClient.execute(request);
+                
+                String responseBody = EntityUtils.toString(response.getEntity());
+                System.out.println("Response from server: " + responseBody);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        };
+    }
+}
+
+
+
+
+

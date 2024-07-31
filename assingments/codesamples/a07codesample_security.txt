@@ -1,0 +1,87 @@
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-security</artifactId>
+</dependency>
+
+
+package com.example.securitydemo.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+
+@Configuration
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+            .authorizeRequests()
+                .antMatchers("/api/public/**").permitAll() // Public API endpoints
+                .antMatchers("/api/admin/**").hasRole("ADMIN") // Restricted API endpoints
+                .anyRequest().authenticated()
+                .and()
+            .httpBasic() // Use HTTP Basic Authentication for simplicity
+                .and()
+            .csrf().disable(); // Disable CSRF for simplicity in this example
+    }
+
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+            .inMemoryAuthentication()
+                .withUser("user")
+                .password("{noop}password") // {noop} is used for plain text passwords
+                .roles("USER")
+                .and()
+                .withUser("admin")
+                .password("{noop}admin")
+                .roles("ADMIN");
+    }
+}
+
+
+package com.example.securitydemo.controller;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api")
+public class ApiController {
+
+    @GetMapping("/public/home")
+    public String publicHome() {
+        return "Welcome to the Public Home Page";
+    }
+
+    @GetMapping("/admin")
+    public String adminHome() {
+        return "Welcome to the Admin Page";
+    }
+    
+    @GetMapping("/login")
+    public String login() {
+        return "Please use HTTP Basic Authentication to log in.";
+    }
+}
+
+Testing with Postman:
+
+Open Postman.
+Public Endpoint: Send a GET request to http://localhost:8080/api/public/home. This should work without any authentication.
+Admin Endpoint: Send a GET request to http://localhost:8080/api/admin. In the Authorization tab, select Basic Auth and use admin as the username and admin as the password. This should return the admin page message.
+
+
+
+
+

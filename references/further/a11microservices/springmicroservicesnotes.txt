@@ -1,0 +1,21 @@
+Components of Spring Boot Microservices:
+
+Spring Cloud: Spring Cloud is an umbrella project that provides tools for building and managing microservices. It includes modules for service discovery, load balancing, configuration management, circuit breakers, and more.
+
+Service Discovery (Eureka): Spring Cloud Eureka is a service registry and discovery server. It allows microservices to register themselves and discover other services in the ecosystem. This enables dynamic scaling and routing.
+
+API Gateway (Zuul): Spring Cloud Zuul acts as an API gateway that manages the routing, filtering, and load balancing of requests to different microservices. It helps simplify the client-side communication with multiple services.
+
+Load Balancing: Spring Cloud provides load balancing capabilities to distribute incoming requests across instances of a microservice. Ribbon is a client-side load balancer used for this purpose.
+
+Configuration Management (Config Server): Spring Cloud Config Server manages externalized configuration for microservices. It allows you to centralize configuration properties for different environments and services.
+
+Circuit Breaker (Hystrix): Spring Cloud Hystrix helps prevent system failures due to service outages. It provides a circuit breaker pattern to handle and manage failures gracefully.
+
+Distributed Tracing (Sleuth): Spring Cloud Sleuth provides distributed tracing to track requests across various microservices. It helps diagnose and troubleshoot performance issues.
+
+API Documentation (Swagger): Although not exclusive to microservices, Swagger or Springfox is often used with Spring Boot to generate API documentation and provide an interactive UI for testing APIs.
+
+Authentication and Authorization (Spring Security): Spring Security is used to handle authentication and authorization in microservices, ensuring that only authorized users can access certain resources.
+
+Containerization and Orchestration: While not part of Spring Boot itself, Docker and orchestration tools like Kubernetes are often used to deploy, manage, and scale microservices containers.

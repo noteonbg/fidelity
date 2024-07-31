@@ -6,6 +6,15 @@ import org.springframework.stereotype.Component;
 @Component
 public class A {
 	
+	
+	/*
+	 * 
+	 *   @Autowired
+    @Qualifier("employeeDaoJdbcImpl")
+
+	 * 
+	 */
+	
 	private B ijk;
 		
 	public A()

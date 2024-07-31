@@ -1,0 +1,105 @@
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+</dependencies>
+
+package com.example.lifecycle;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+@SpringBootApplication
+public class SpringBootLifecycleApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBootLifecycleApplication.class, args);
+    }
+
+    @Bean
+    public CommandLineRunner commandLineRunner() {
+        return args -> {
+            System.out.println("CommandLineRunner: Application started with command-line arguments: " + String.join(", ", args));
+        };
+    }
+
+    @Bean
+    public ApplicationRunner applicationRunner() {
+        return args -> {
+            System.out.println("ApplicationRunner: Application started with application arguments: " + args.getOptionNames());
+        };
+    }
+
+    @Component
+    public static class LifecycleComponent {
+
+        @PostConstruct
+        public void postConstruct() {
+            System.out.println("PostConstruct: Bean is initialized.");
+        }
+
+        @PreDestroy
+        public void preDestroy() {
+            System.out.println("PreDestroy: Bean is about to be destroyed.");
+        }
+    }
+}
+
+package com.example.lifecycle;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
+@SpringBootApplication
+public class SpringBootLifecycleApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(SpringBootLifecycleApplication.class, args);
+    }
+
+    @Bean
+    public CommandLineRunner commandLineRunner() {
+        return args -> {
+            System.out.println("CommandLineRunner: Application started with command-line arguments: " + String.join(", ", args));
+        };
+    }
+
+    @Bean
+    public ApplicationRunner applicationRunner() {
+        return args -> {
+            System.out.println("ApplicationRunner: Application started with application arguments: " + args.getOptionNames());
+        };
+    }
+
+    @Component
+    public static class LifecycleComponent {
+
+        @PostConstruct
+        public void postConstruct() {
+            System.out.println("PostConstruct: Bean is initialized.");
+        }
+
+        @PreDestroy
+        public void preDestroy() {
+            System.out.println("PreDestroy: Bean is about to be destroyed.");
+        }
+    }
+}
+

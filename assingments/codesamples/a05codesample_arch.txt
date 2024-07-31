@@ -1,0 +1,191 @@
+Asset: Represents an asset entity (e.g., computers, furniture).
+AssetRepository: Data Access Object (DAO) for accessing asset data.
+AssetService: Service layer for business logic related to assets.
+AssetController: REST controller to handle HTTP requests related to assets.
+
+package com.example.assetmanagement.entity;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+@Entity
+public class Asset {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotNull(message = "Asset name cannot be null")
+    @Size(min = 2, max = 100, message = "Asset name must be between 2 and 100 characters")
+    private String name;
+
+    private String description;
+
+    private String status; // e.g., Available, In Use, Maintenance
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+}
+
+package com.example.assetmanagement.repository;
+
+import com.example.assetmanagement.entity.Asset;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface AssetRepository extends JpaRepository<Asset, Long> {
+    // You can define custom queries here if needed
+}
+
+
+package com.example.assetmanagement.service;
+
+import com.example.assetmanagement.entity.Asset;
+import com.example.assetmanagement.repository.AssetRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+
+@Service
+public class AssetService {
+
+    @Autowired
+    private AssetRepository assetRepository;
+
+    public Asset createAsset(Asset asset) {
+        return assetRepository.save(asset);
+    }
+
+    public List<Asset> getAllAssets() {
+        return assetRepository.findAll();
+    }
+
+    public Optional<Asset> getAssetById(Long id) {
+        return assetRepository.findById(id);
+    }
+
+    public Asset updateAsset(Long id, Asset asset) {
+        if (assetRepository.existsById(id)) {
+            asset.setId(id);
+            return assetRepository.save(asset);
+        } else {
+            throw new RuntimeException("Asset not found with ID: " + id);
+        }
+    }
+
+    public void deleteAsset(Long id) {
+        if (assetRepository.existsById(id)) {
+            assetRepository.deleteById(id);
+        } else {
+            throw new RuntimeException("Asset not found with ID: " + id);
+        }
+    }
+}
+
+package com.example.assetmanagement.controller;
+
+import com.example.assetmanagement.entity.Asset;
+import com.example.assetmanagement.service.AssetService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping("/api/assets")
+public class AssetController {
+
+    @Autowired
+    private AssetService assetService;
+
+    @PostMapping
+    public ResponseEntity<Asset> createAsset(@Valid @RequestBody Asset asset, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        Asset createdAsset = assetService.createAsset(asset);
+        return new ResponseEntity<>(createdAsset, HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Asset>> getAllAssets() {
+        List<Asset> assets = assetService.getAllAssets();
+        return new ResponseEntity<>(assets, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Asset> getAssetById(@PathVariable Long id) {
+        Optional<Asset> asset = assetService.getAssetById(id);
+        return asset.map(ResponseEntity::ok)
+                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Asset> updateAsset(@PathVariable Long id, @Valid @RequestBody Asset asset, BindingResult bindingResult) {
+        if (bindingResult.hasErrors()) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        try {
+            Asset updatedAsset = assetService.updateAsset(id, asset);
+            return new ResponseEntity<>(updatedAsset, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAsset(@PathVariable Long id) {
+        try {
+            assetService.deleteAsset(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+}
+
+
+
+

@@ -1,0 +1,73 @@
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+</dependencies>
+
+application.properties
+app.name=DefaultApp
+app.message=Hello from Default Profile
+
+application-dev.properties
+app.name=DevApp
+app.message=Hello from Development Profile
+
+application-prod.properties
+app.name=ProdApp
+app.message=Hello from Production Profile
+
+
+package com.example.profiledemo;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+public class AppProperties {
+
+    @Value("${app.name}")
+    private String appName;
+
+    @Value("${app.message}")
+    private String appMessage;
+
+    public String getAppName() {
+        return appName;
+    }
+
+    public String getAppMessage() {
+        return appMessage;
+    }
+}
+
+package com.example.profiledemo;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api")
+public class AppController {
+
+    private final AppProperties appProperties;
+
+    public AppController(AppProperties appProperties) {
+        this.appProperties = appProperties;
+    }
+
+    @GetMapping("/info")
+    public String getInfo() {
+        return String.format("App Name: %s, Message: %s", appProperties.getAppName(), appProperties.getAppMessage());
+    }
+}
+
+
+
+java -jar myapp.jar --spring.profiles.active=dev
+spring.profiles.active=dev
+
+
+
+

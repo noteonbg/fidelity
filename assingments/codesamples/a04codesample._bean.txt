@@ -1,0 +1,201 @@
+<dependencies>
+    <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+</dependencies>
+
+package com.example.scopeexample.service;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class SingletonService {
+
+    public SingletonService() {
+        System.out.println("SingletonService instance created.");
+    }
+
+    public String getMessage() {
+        return "This is a singleton bean.";
+    }
+}
+
+
+package com.example.scopeexample.service;
+
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
+
+@Service
+@Scope("prototype")
+public class PrototypeService {
+
+    public PrototypeService() {
+        System.out.println("PrototypeService instance created.");
+    }
+
+    public String getMessage() {
+        return "This is a prototype bean.";
+    }
+}
+
+
+package com.example.scopeexample.controller;
+
+import com.example.scopeexample.service.PrototypeService;
+import com.example.scopeexample.service.SingletonService;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api")
+public class ScopeController {
+
+    private final SingletonService singletonService;
+    private final PrototypeService prototypeService1;
+    private final PrototypeService prototypeService2;
+
+    public ScopeController(SingletonService singletonService, PrototypeService prototypeService1, PrototypeService prototypeService2) {
+        this.singletonService = singletonService;
+        this.prototypeService1 = prototypeService1;
+        this.prototypeService2 = prototypeService2;
+    }
+
+    @GetMapping("/singleton")
+    public String singletonInfo() {
+        return singletonService.getMessage();
+    }
+
+    @GetMapping("/prototype")
+    public String prototypeInfo() {
+        return "PrototypeService 1: " + prototypeService1.getMessage() + ", PrototypeService 2: " + prototypeService2.getMessage();
+    }
+}
+
+----------------------------------------------------------------
+
+The @Primary annotation is used in the AppConfig class to indicate that the morningGreetingService bean should be preferred when multiple beans of the same type are present.
+Qualifier (@Qualifier):
+
+The @Qualifier annotation in AppController is used to specify which bean to inject for the morningGreetingService and eveningGreetingService fields. This helps in resolving the conflict explicitly.
+
+
+
+
+
+
+package com.example.conflictresolution.service;
+
+public interface GreetingService {
+    String greet();
+}
+
+package com.example.conflictresolution.service;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class MorningGreetingService implements GreetingService {
+
+    @Override
+    public String greet() {
+        return "Good morning!";
+    }
+}
+
+
+package com.example.conflictresolution.service;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class EveningGreetingService implements GreetingService {
+
+    @Override
+    public String greet() {
+        return "Good evening!";
+    }
+}
+
+package com.example.conflictresolution.config;
+
+import com.example.conflictresolution.service.GreetingService;
+import com.example.conflictresolution.service.MorningGreetingService;
+import com.example.conflictresolution.service.EveningGreetingService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+
+@Configuration
+public class AppConfig {
+
+    @Bean
+    @Primary
+    public GreetingService morningGreetingService() {
+        return new MorningGreetingService();
+    }
+
+    @Bean
+    public GreetingService eveningGreetingService() {
+        return new EveningGreetingService();
+    }
+}
+
+
+package com.example.conflictresolution.controller;
+
+import com.example.conflictresolution.service.GreetingService;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api")
+public class AppController {
+
+    private final GreetingService morningGreetingService;
+    private final GreetingService eveningGreetingService;
+
+    public AppController(
+            @Qualifier("morningGreetingService") GreetingService morningGreetingService,
+            @Qualifier("eveningGreetingService") GreetingService eveningGreetingService) {
+        this.morningGreetingService = morningGreetingService;
+        this.eveningGreetingService = eveningGreetingService;
+    }
+
+    @GetMapping("/morning")
+    public String morningGreeting() {
+        return morningGreetingService.greet();
+    }
+
+    @GetMapping("/evening")
+    public String eveningGreeting() {
+        return eveningGreetingService.greet();
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-------------------------------------------------------------
+
+
+
+
+

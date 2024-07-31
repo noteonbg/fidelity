@@ -25,7 +25,7 @@ public class AccountController {
 			@RequestParam int  pin)
 	{
 		
-		  System.out.println("input got is " + accountno +" " + pin); AccountStatus ac
+		  System.out.println("input got is " + accountno +" " + pin); 
 		  AccountStatus x =accService.getBalance(accountno, pin);
 		  ResponseEntity<AccountStatus> r=null;
 		  if(x.getStatusCode()==1)

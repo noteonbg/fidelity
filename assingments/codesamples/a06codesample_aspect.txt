@@ -1,0 +1,72 @@
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-aop</artifactId>
+</dependency>
+
+package com.example.demo.aspect;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.springframework.stereotype.Component;
+
+@Aspect
+@Component
+public class LoggingAspect {
+
+    @Around("execution(* com.example.demo.service.*.*(..))")
+    public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
+        long start = System.currentTimeMillis();
+
+        Object proceed = joinPoint.proceed();
+
+        long executionTime = System.currentTimeMillis() - start;
+        System.out.println(joinPoint.getSignature() + " executed in " + executionTime + "ms");
+
+        return proceed;
+    }
+}
+
+
+package com.example.demo.service;
+
+import org.springframework.stereotype.Service;
+
+@Service
+public class DemoService {
+
+    public String process() throws InterruptedException {
+        // Simulate some processing
+        Thread.sleep(200);
+        return "Processing Complete";
+    }
+}
+
+package com.example.demo.controller;
+
+import com.example.demo.service.DemoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/demo")
+public class DemoController {
+
+    @Autowired
+    private DemoService demoService;
+
+    @GetMapping("/process")
+    public String process() throws InterruptedException {
+        return demoService.process();
+    }
+}
+
+Expected output execution(* com.example.demo.service.DemoService.process(..)) executed in 200ms
+
+
+
+
+
+

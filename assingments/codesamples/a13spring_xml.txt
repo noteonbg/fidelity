@@ -1,0 +1,69 @@
+src/main/resources/beans.xml
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- Define a bean of type HelloWorld -->
+    <bean id="helloWorld" class="com.example.demo.HelloWorld">
+        <property name="message" value="Hello, World!" />
+    </bean>
+
+</beans>
+
+--------------------
+
+package com.example.demo;
+
+public class HelloWorld {
+
+    private String message;
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public void printMessage() {
+        System.out.println(message);
+    }
+}
+
+
+
+----------------------------------------
+
+package com.example.demo;
+
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.ApplicationContext;
+
+@SpringBootApplication
+@ImportResource("classpath:beans.xml")
+public class DemoApplication implements CommandLineRunner {
+
+    private final ApplicationContext context;
+
+    public DemoApplication(ApplicationContext context) {
+        this.context = context;
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(DemoApplication.class, args);
+    }
+
+    @Override
+    public void run(String... args) {
+        HelloWorld helloWorld = (HelloWorld) context.getBean("helloWorld");
+        helloWorld.printMessage();
+    }
+}
+
+
+
+
