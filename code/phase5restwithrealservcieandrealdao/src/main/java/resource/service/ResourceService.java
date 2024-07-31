@@ -20,6 +20,8 @@ public class ResourceService implements ResourceServiceInterface {
 	public Resource getResourceDetails(int resourceId) {
 		// TODO Auto-generated method stub
 		
+		
+		
 		Optional<Resource> x = resourceDaoInterface.findById(resourceId);
 		Resource r = new Resource(-1,"whocares",false);
 		if(x.isPresent())

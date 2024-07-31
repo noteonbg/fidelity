@@ -15,13 +15,13 @@ public class LoggingAspect
 {
 	private static final Logger LOGGER = LogManager.getLogger(LoggingAspect.class);
 	
-	@Around("execution(* com.howtodoinjava.aop..*(..)))")
+	@Around("execution(* com.howtodoinjava.aop.DomainService.*(..)))")
     public Object profileAllMethods(ProceedingJoinPoint proceedingJoinPoint) throws Throwable 
     {
 		
 		
 		
-		System.out.println("aspect oriented programming working");
+		System.out.println("apply security");
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
          
         //Get intercepted method details
@@ -35,10 +35,14 @@ public class LoggingAspect
         Object result = proceedingJoinPoint.proceed();
         stopWatch.stop();
  
+        /*
         //Log method execution time
-        LOGGER.info("Execution time of " + className + "." + methodName + " "
+        //LOGGER.info("Execution time of " + className + "." + methodName + " "
         					+ ":: " + stopWatch.getTotalTimeMillis() + " ms");
+        					
+        					*/
  
+        System.out.println("stopped apply security");
         return result;
         
        
